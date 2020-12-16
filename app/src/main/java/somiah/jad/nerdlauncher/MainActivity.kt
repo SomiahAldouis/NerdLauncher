@@ -45,11 +45,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private class LauncherHolder(itemView: View):
-            RecyclerView.ViewHolder(itemView){
+            RecyclerView.ViewHolder(itemView),View.OnClickListener{
 
         private val nameTextView = itemView as TextView
        // private val iconApp = itemView as ImageView
         private lateinit var resolveInfo: ResolveInfo
+
+        init {
+            nameTextView.setOnClickListener(this)
+        }
 
         fun bindLauncher(resolveInfo: ResolveInfo){
             this.resolveInfo = resolveInfo
@@ -58,6 +62,17 @@ class MainActivity : AppCompatActivity() {
             //val appIcon = resolveInfo.loadIcon(packageManager)
             nameTextView.text = appName
             //iconApp = appIcon
+        }
+        override fun onClick(view: View) {
+            val activityInfo = resolveInfo.activityInfo
+            val intent = Intent(Intent.ACTION_MAIN).apply {
+                setClassName(activityInfo.applicationInfo.packageName,
+                    activityInfo.name)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            }
+            val context = view.context
+            context.startActivity(intent)
         }
     }
 
